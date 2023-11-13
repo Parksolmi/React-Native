@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from 'react-native';
 
 export default function App() {
   const [enteredGoalText, setEnteredGoalText] = useState("");
@@ -11,19 +11,29 @@ export default function App() {
   };
 
   function addGoalHandler() {
-    setCourseGoals(currentCourseGoals => [...currentCourseGoals, enteredGoalText]);
+    setCourseGoals(currentCourseGoals => [
+      ...currentCourseGoals, 
+      {text: enteredGoalText, key: Math.random().toString(),}]);
   }
 
   return (
 
     <View style={styles.appContainer}>
       <View style={styles.inputContainer}>
-        <TextInput style={styles.textInput} placeholder='Your course goal!' onChangeText={goalInputHandler}/>
+        <TextInput style={styles.textInput} placeholder='Your course goal!' onChangeText={goalInputHandler} />
         <Button title='Add Goal' onPress={addGoalHandler} />
       </View>
       <View style={styles.goalsContainer}>
-        <ScrollView>
-          {
+        <FlatList 
+          data={courseGoals} 
+          renderItem={itemData => {
+            return (
+              <View style={styles.goalItem}>
+                  <Text style={styles.goalText}> {itemData.item.text} </Text>
+                </View>
+            );
+        }}/>
+          {/* {
             courseGoals.map((goal) => 
               <View style={styles.goalItem} key={goal}>
                 <Text style={styles.goalText}>
@@ -31,14 +41,13 @@ export default function App() {
                 </Text>
               </View>
             )
-          }
-        </ScrollView>
+          } */}
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
     paddingTop: 50,
@@ -68,7 +77,7 @@ const styles = StyleSheet.create ({
     padding: 8,
     borderRadius: 6,
     backgroundColor: '#5e0acc',
-    
+
   },
   goalText: {
     color: 'white',
